@@ -13,10 +13,10 @@ serverSocket = socket(AF_INET, SOCK_STREAM)
 # Bind IP address and port
 serverSocket.bind((TCP_IP, TCP_PORT))
 
-
-#listening for one client
+#listening for  Client
 serverSocket.listen(1)
-print('Ready to serve...')
+print('Ready to serve..')
+serverSocket.settimeout(20)
 
 #Establish the connection
 connectionSocket, addr = serverSocket.accept()
