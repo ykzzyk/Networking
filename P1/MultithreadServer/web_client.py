@@ -2,7 +2,7 @@ from socket import *
 
 # Parameters
 TCP_IP = '10.102.19.207'
-TCP_PORT = 12007
+TCP_PORT = 12003
 BUFFER_SIZE = 1024
 
 # Prepare a client socket
