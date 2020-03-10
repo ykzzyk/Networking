@@ -9,11 +9,10 @@ def tcp_server(ip, port, bfsz):
 
 
     # Bind IP address and port
-    serverSocket.bind((TCP_IP, TCP_PORT))
+    serverSocket.bind((ip, port))
     
     #listening for  Client
-    n = 5
-    serverSocket.listen(n)
+    serverSocket.listen(5)
     print('Multithread server ready to serve..')
     serverSocket.settimeout(200)
 
@@ -23,7 +22,7 @@ def tcp_server(ip, port, bfsz):
     while True:
         try:
             # Receive the message from the Client
-            message = connectionSocket.recv(1024)
+            message = connectionSocket.recv(bfsz)
             
             filename = message.split()[1].decode('utf-8')
             
@@ -49,20 +48,25 @@ def tcp_server(ip, port, bfsz):
             #Close client socket
             connectionSocket.close()
             break
-
+        
+    # Close Server 
+    print("\n\nServer Quit Successfully!")      
+    serverSocket.close()
     
-    return n
-    
-def multi_thread(num, ip, port, bfsz):
-    t = 0
+def multi_thread(ip, port, bfsz):
+    num = 5
+    cnt = 0
     threads = []
-    while t < num:
-        t = threading.Thread(target = tcp_server, args = (ip, port+int(t), bfsz))
+    while cnt < num:
+        t = threading.Thread(target = tcp_server, args = (ip, port+cnt, bfsz))
         t.start()
         threads.append(t)
-        t = int(t) + 1
+        cnt = cnt + 1
         
-    return threads
+    for t in threads:
+        t.join()
+        
+    
     
 if __name__ == '__main__':
     # Parameters
@@ -70,12 +74,9 @@ if __name__ == '__main__':
     TCP_PORT = 12003
     BUFFER_SIZE = 1024
     
-    num = tcp_server(TCP_IP, TCP_PORT, BUFFER_SIZE)
-    threads = multi_thread(num, TCP_IP, TCP_PORT, BUFFER_SIZE)
+    #tcp_server(TCP_IP, TCP_PORT, BUFFER_SIZE)
+    multi_thread(TCP_IP, TCP_PORT, BUFFER_SIZE)
 
-    for t in threads:
-        t.join()
+    
         
-    # Close Server 
-    print("\n\nServer Quit Successfully!")      
-    serverSocket.close()
+    
