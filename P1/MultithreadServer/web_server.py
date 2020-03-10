@@ -12,9 +12,8 @@ def tcp_server(ip, port, bfsz):
     serverSocket.bind((ip, port))
     
     #listening for  Client
-    serverSocket.listen(5)
-    print('Multithread server ready to serve..')
-    serverSocket.settimeout(200)
+    serverSocket.listen(1)
+    serverSocket.settimeout(80)
 
     #Establish the connection
     connectionSocket, addr = serverSocket.accept()
@@ -49,11 +48,10 @@ def tcp_server(ip, port, bfsz):
             connectionSocket.close()
             break
         
-    # Close Server 
-    print("\n\nServer Quit Successfully!")      
+    # Close Server     
     serverSocket.close()
     
-def multi_thread(ip, port, bfsz):
+def multithreading(ip, port, bfsz):
     num = 5
     cnt = 0
     threads = []
@@ -63,8 +61,11 @@ def multi_thread(ip, port, bfsz):
         threads.append(t)
         cnt = cnt + 1
         
-    for t in threads:
+    for k, t in enumerate(threads):
+        print(t)
         t.join()
+        print(f"\nServer {k+1} Quit Successfully!\n\n")  
+        
         
     
     
@@ -74,8 +75,8 @@ if __name__ == '__main__':
     TCP_PORT = 12003
     BUFFER_SIZE = 1024
     
-    #tcp_server(TCP_IP, TCP_PORT, BUFFER_SIZE)
-    multi_thread(TCP_IP, TCP_PORT, BUFFER_SIZE)
+    print('Multithread server ready to serve..')
+    multithreading(TCP_IP, TCP_PORT, BUFFER_SIZE)
 
     
         
