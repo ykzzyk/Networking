@@ -25,6 +25,6 @@ while True:
 print("received data:", full_content)
 
 # Close Client
-print("\n\nClient close successfully!")
 clientSocket.close()
+print("\n\nClient close successfully!")
 

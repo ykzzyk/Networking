@@ -51,6 +51,6 @@ while True:
         connectionSocket.close()
         break
 
-# Close Server 
-print("\n\nServer Quit Successfully!")      
+# Close Server
 serverSocket.close()
+print("\n\nServer Quit Successfully!")     

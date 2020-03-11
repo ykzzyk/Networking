@@ -52,5 +52,5 @@ while True:
         break
 
 # Close Server 
-print("\n\nServer Quit Successfully!")      
 serverSocket.close()
+print("\n\nServer Quit Successfully!")   
