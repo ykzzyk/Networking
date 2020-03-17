@@ -71,7 +71,7 @@ def multithreading(ip, port, bfsz):
     
 if __name__ == '__main__':
     # Parameters
-    TCP_IP = '10.102.19.207'
+    TCP_IP = 'localhost'
     TCP_PORT = 12003
     BUFFER_SIZE = 1024
     

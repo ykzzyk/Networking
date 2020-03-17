@@ -3,7 +3,7 @@ import argparse
 
 
 # Parameters
-#TCP_IP = '10.102.19.207'
+#TCP_IP = 'localhost'
 #TCP_PORT = 12003
 BUFFER_SIZE = 1024
 
@@ -33,6 +33,9 @@ while True:
     data = data.decode('utf-8')
     full_content += data
     
+with open('files_from_server/HelloWorld.html', 'w') as f:
+    f.write(full_content)
+
 print("received data:", full_content)
 
 # Close Client
