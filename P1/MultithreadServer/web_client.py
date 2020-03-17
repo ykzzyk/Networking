@@ -21,7 +21,10 @@ while True:
         break
     data = data.decode('utf-8')
     full_content += data
-    
+
+with open(f'files_from_server/HelloWorld_{TCP_PORT}.html', 'w') as f:
+    f.write(full_content)
+
 print("received data:", full_content)
 
 # Close Client

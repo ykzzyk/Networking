@@ -6,7 +6,7 @@ if __name__ == '__main__':
     parser.add_argument('parameter')
     args = parser.parse_args()
     
-    info = TCP('10.102.19.207', 12003, 1024)
+    info = TCP('localhost', 12003, 1024)
     
     if args.parameter == 'server':
         server = TCP.tcp_server(info)

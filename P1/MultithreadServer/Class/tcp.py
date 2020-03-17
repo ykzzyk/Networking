@@ -13,7 +13,7 @@ class TCP():
         # Bind IP address and port
         serverSocket.bind((self.ip, self.port))
         
-        #listening for  Client
+        #listening for Client
         serverSocket.listen(1)
         print('Ready to serve..')
         serverSocket.settimeout(80)
