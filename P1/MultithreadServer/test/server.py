@@ -7,12 +7,14 @@ def tcp_server(TCP_IP, TCP_PORT, BUFFER_SIZE):
     # Prepare a server socket
     serverSocket = socket(AF_INET, SOCK_STREAM)
 
-    # Bind TCP_IP address and TCP_PORT
-    serverSocket.bind((TCP_IP, TCP_PORT))
-        
+    try:
+        # Bind TCP_IP address and TCP_PORT
+        serverSocket.bind((TCP_IP, TCP_PORT))
+    except Exception:
+        print("\n")
     threads = []
 
-    #listening for  Client
+    #listening for Client
     serverSocket.listen(5)
     serverSocket.settimeout(80)
     print('Multithread server ready to serve..')
@@ -20,6 +22,8 @@ def tcp_server(TCP_IP, TCP_PORT, BUFFER_SIZE):
     #Establish the connection
     while True:
         if len(threads) == 5:
+            # Close Server  
+            serverSocket.close()
             break
         try:
             connectionSocket, addr = serverSocket.accept()
@@ -51,13 +55,14 @@ def tcp_server(TCP_IP, TCP_PORT, BUFFER_SIZE):
             
             #Close client socket
             connectionSocket.close()
-        
+    
+    # Join threads    
     for t in threads:
         t.join()
             
         
     # Close Server     
-    serverSocket.close()
+    #serverSocket.close()
     
 if __name__ == "__main__":
     # Parameters
