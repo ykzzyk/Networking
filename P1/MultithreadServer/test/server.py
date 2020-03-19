@@ -52,8 +52,8 @@ def tcp_server(TCP_IP, TCP_PORT, BUFFER_SIZE):
             #Close client socket
             connectionSocket.close()
         
-        for t in threads:
-            t.join()
+    for t in threads:
+        t.join()
             
         
     # Close Server     
