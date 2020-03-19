@@ -13,12 +13,12 @@ class TCP():
         # Bind IP address and port
         serverSocket.bind((self.ip, self.port))
         
-        #listening for Client
+        # Listening for Client
         serverSocket.listen(1)
         print('Ready to serve..')
         serverSocket.settimeout(80)
 
-        #Establish the connection
+        # Establish the connection
         connectionSocket, addr = serverSocket.accept()
 
         while True:
