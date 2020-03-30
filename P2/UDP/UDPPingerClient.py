@@ -16,10 +16,7 @@ while times < 10:
         start = time.time()
         clientSocket.sendto(message, (serverName, serverPort))
         request_times = times+1
-        if request_times == 1:
-            print('ping' + ' ' + str(request_times) + ' ' + "time:" + ' start at ' + str(start))
-        else:
-            print('ping' + ' ' + str(request_times) + ' ' + "times:" + ' start at ' + str(start))
+        print('Package' + ' ' + str(request_times) + ' ' + 'ping' + ' start at ' + str(start))
         try:
             modifiedMessage, serverAddress = clientSocket.recvfrom(1024)
             end = time.time()

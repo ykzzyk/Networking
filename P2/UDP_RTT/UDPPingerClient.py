@@ -18,10 +18,7 @@ while times < 10:
         start = time.time()
         clientSocket.sendto(message, (serverName, serverPort))
         request_times = times+1
-        if request_times == 1:
-            print('ping' + ' ' + str(request_times) + ' ' + "time:" + ' start at ' + str(start))
-        else:
-            print('ping' + ' ' + str(request_times) + ' ' + "times:" + ' start at ' + str(start))
+        print('Package' + ' ' + str(request_times) + ' ' + 'ping' + ' start at ' + str(start))
         try:
             modifiedMessage, serverAddress = clientSocket.recvfrom(1024)
             end = time.time()
@@ -47,6 +44,5 @@ average_RTT = total / len(RTT_response)
 print("The minimal RTT response is: {}s\nThe maximum RTT response is: {}s\nThe average RTT response is: {}s\n".format(min_RTT, max_RTT, average_RTT))
 
 loss_rate = float(cnt) / 10
-print(loss_rate)
-print("The packet loss rate is: {:.0%}".format(loss_rate))
+print("The packet loss rate is: {:.0%}\n".format(loss_rate))
 clientSocket.close()
