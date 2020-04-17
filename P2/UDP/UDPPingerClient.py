@@ -18,7 +18,7 @@ times = 0
 # Limit to 10 PINGs
 while times < 10:
     try:
-        message = "ping"
+        message = b"ping"
         start = time.time()
         
         # Send message to server
