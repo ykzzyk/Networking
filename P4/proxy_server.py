@@ -2,12 +2,6 @@ from socket import *
 import sys
 
 if __name__ == '__main__':  
-    if len(sys.argv) <= 1:
-        
-        pass
-        #print('Usage : "python ProxyServer.py server_ip"\nserver_ip : It is the IP Address Of Proxy Server') 
-        #sys.exit(2)
-        
     # Proxy server: localhost
     # Create a server socket, bind it to a port and start listening 
     tcpSerSock = socket(AF_INET, SOCK_STREAM)
@@ -22,17 +16,14 @@ if __name__ == '__main__':
         # Strat receiving data from the client
         print('Ready to serve...')
         tcpCliSock, addr = tcpSerSock.accept()
-        print(tcpCliSock)
-        print(addr)
-        print('Received a connection from:'.format(addr))
-        #tcpSerSock.create_connection((addr, 8888))
+        print('Received a connection from:{}'.format(addr))
         message = tcpCliSock.recv(1024).decode()
-        print(f'message:{message} end of message')
+        print(f'MESSAGE:\n\n{message}END OF MESSAGE\n\n')
         # Extract the filename from the given message 
-        print(message.split()[1])
-        hostn = message.split()[1]
-        filename = ".".join(hostn.split(".")[1:])
-        #filename = message.split()[1]
+        
+        hostn = message.split('\r\n')[1]
+        print(f'hostn: {message.split()[1]}')
+        filename = ".".join(hostn.partition("/")[2:])
         print(f'filename:{filename}')
         fileExist = "false"
         filetouse = "/" + filename
@@ -56,33 +47,23 @@ if __name__ == '__main__':
             if fileExist == "false":
                 # Create a socket on the proxyserver
                 c = socket(AF_INET, SOCK_STREAM) 
-                #hostn = filename.replace("www.","",1)
+                hostn = filename.replace("www.","",1)
                 
                 print(f'hostn:{hostn}')
                 
-                # If the host name does not include a tuple (ip address and port), avoid processing
-                if hostn.find(":") == -1:
-                    print("EMPTY HOSTN")
-                    continue
-                
                 addr, port = hostn.split(":")
-                
-                # If the request is not an HTTP request, avoid processing
-                if int(port) != 443 and int(port) != 80:
-                    print("SKIPPING NON-443 REQUEST")
-                    continue
                 
                 try:
                     # Connect to the socket to port (443, 80)
                     # Fill in start.
                     print("CONNECTING")
-                    c.connect((addr, int(port)))
+                    c.connect((addr, port))
                     print("FINISHED CONNECTING")
                     # Fill in end.
                     # Create a temporary file on this socket and ask port 443 for the file requested by the client
                     print("makefile")
                     fileobj = c.makefile('rb', 0)
-                    command = "GET " + "https://" + filename + " HTTP/1.0\n\n"
+                    command = "GET " + "https://" + fileobj + " HTTP/1.0\r\n"
                     print("WRITING COMMAND")
                     print(command)
                     fileobj.write(command)
