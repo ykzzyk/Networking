@@ -2,6 +2,11 @@ from socket import *
 import requests
 import sys
 
+
+# Link:
+# http://localhost:8888/search?hl=en&gbv=2&ie=ISO-8859-1&q=help&oq=help&aqs=heirloom-srp..0l5
+# http://localhost:8888/search?hl=en&gbv=2&ie=ISO-8859-1&q=heelp&oq=heelp&aqs=heirloom-srp..0l5
+# http://localhost:8888/search?hl=en&gbv=2&ie=ISO-8859-1&q=heelo&oq=heelo&aqs=heirloom-srp..0l5
 if __name__ == '__main__':
     # Proxy server: localhost
     # Create a server socket, bind it to a port and start listening 
@@ -22,30 +27,23 @@ if __name__ == '__main__':
         message = tcpCliSock.recv(1024).decode()
         print(f'MESSAGE:\n\n{message}END OF MESSAGE\n\n')
         
-        hostn = message.split()[1]
-        print(f'hostn: {hostn}')
-        filename = hostn.partition("/")[2]
-        print(f'filename:{filename}')
+        filename = message.split()[1].partition("/")[2]
+        filename = filename.replace("/", "_")
         fileExist = "false"
-        filetouse = "/" + filename
-        print(f'filetouse:{filetouse}')
         
         try:
             # Check whether the file exist in the cache
-            filename = filename.replace("/", "_")
-            f = open(filetouse[1:], "rb")
+            f = open(filename, "rb")
             outputdata = f.read()
-            print(outputdata)
-            print("\n\n-------------------------------------------\n\n")
             fileExist = "true"
             
             # Headers
             # ProxyServer finds a cache hit and generates a response message
-            tcpCliSock.send(b"HTTP/1.1 200 OK\r\n") 
+            tcpCliSock.send(b"HTTP/1.1 200 OK\r\n")
             tcpCliSock.send(b"Content-Type:text/html\r\n\r\n")
-            
+
             # SEND
-            tcpCliSock.sendall(outputdata)
+            tcpCliSock.sendall(outputdata + b"\r\n\r\n")
             print('Read from cache\n\n')
             
         # Error handling for file not found in cache
@@ -57,28 +55,26 @@ if __name__ == '__main__':
                     # Connect to the socket to port 80
                     
                     print("CONNECTING")
-                    hostname = gethostbyname('www.google.com')
-                    c.connect((hostname, 80))
+                    c.connect((gethostbyname('www.google.com'), 80))
                     print("FINISHED CONNECTING")
                           
-                    r = requests.get("http://www.google.com")
-                    # gif = requests.get('http://google.com/' + hostn)
+                    if message.split()[1] == '/google.com':
+                        r = requests.get("http://www.google.com/")
+                    else:
+                        r = requests.get("http://www.google.com/" + message.split()[1])
+                    
                     # Create a new file in the cache for the requested file. 
                     # Also send the response in the buffer to client socket and the corresponding file in the cache
-                    file1 = open("./" + filename,"wb")
-                    print(r.content)
-                    file1.write(r.content)
+                    file = open("./" + filename,"wb")
+                    
+                    file.write(r.content)
                 except Exception as e:
                     raise e
                     print('Illegal request')
             else:
-                # HTTP response message for file not found 
-                # Fill in start.
+                # HTTP response message for file not found
                 print('404 Error file not found.')
-                # Fill in end.
     
         # Close the client and the server sockets
         tcpCliSock.close()
-    # Fill in start.
     tcpSerSock.close()
-    # Fill in end.
