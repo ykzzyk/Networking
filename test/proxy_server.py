@@ -8,6 +8,9 @@ import sys
 # http://localhost:8888/search?hl=en&gbv=2&ie=ISO-8859-1&q=heelp&oq=heelp&aqs=heirloom-srp..0l5
 # http://localhost:8888/search?hl=en&gbv=2&ie=ISO-8859-1&q=heelo&oq=heelo&aqs=heirloom-srp..0l5
 if __name__ == '__main__':
+    if len(sys.argv) <= 1: 
+        print('Usage : "python ProxyServer.py server_ip"\n[server_ip : It is the IP  Address Of Proxy Server')
+        sys.exit(2)
     # Proxy server: localhost
     # Create a server socket, bind it to a port and start listening 
     tcpSerSock = socket(AF_INET, SOCK_STREAM)
@@ -55,13 +58,13 @@ if __name__ == '__main__':
                     # Connect to the socket to port 80
                     
                     print("CONNECTING")
-                    c.connect((gethostbyname('www.google.com'), 80))
+                    c.connect((gethostbyname(f'www.{sys.argv[1]}.com'), 80))
                     print("FINISHED CONNECTING")
                           
-                    if message.split()[1] == '/google.com':
-                        r = requests.get("http://www.google.com/")
+                    if message.split()[1] == f'/{sys.argv[1]}.com':
+                        r = requests.get(f"http://www.{sys.argv[1]}.com/")
                     else:
-                        r = requests.get("http://www.google.com/" + message.split()[1])
+                        r = requests.get(f"http://www.{sys.argv[1]}.com/" + message.split()[1])
                     
                     # Create a new file in the cache for the requested file. 
                     # Also send the response in the buffer to client socket and the corresponding file in the cache
