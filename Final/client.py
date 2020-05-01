@@ -10,16 +10,17 @@
 
 import socket
 import sys
+import argparse
 
 def main():
-    if len(sys.argv) != 3:
-        print("Error: Program needs <IP> and <PORT> arguments")
-        sys.exit()
 
-    # Tip: You should use argparse - this method
-    # is sloppy and inflexible
-    ip = sys.argv[1]
-    port = int(sys.argv[2])
+    # Use argparse method
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--version', action='version', version='%(prog)s 1.0')
+    parser.add_argument('server_ip', nargs='?', default='localhost')
+    parser.add_argument('server_port', nargs='?', default=8765)
+    parser.add_argument('username')
+    args = parser.parse_args()
     
     # Create TCP socket
     try:
@@ -29,11 +30,11 @@ def main():
         print("Description: " + str(msg))
         sys.exit()
 
-    print("Connecting to server at " + ip + " on port " + str(port))
+    print("Connecting to server at " + str(args.server_ip) + " on port " + str(args.server_port))
      
     # Connect to server
     try:
-        s.connect((ip , port))
+        s.connect((args.server_ip , args.server_port))
     except socket.error as msg:
         print("Error: Could not open connection")
         print("Description: " + str(msg))
@@ -42,7 +43,8 @@ def main():
     print("Connection established")
     
     # Send message to server
-    string_unicode = "Tiger Roar!"
+    # string_unicode = "Tiger Roar!"
+    string_unicode = "Car Meow!"
     raw_bytes = bytes(string_unicode,'ascii')
     
     try:

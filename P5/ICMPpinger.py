@@ -111,3 +111,5 @@ def ping(dest_addr, timeout = 2, count = 4):
 # main function
 if __name__ == '__main__':
     ping("google.com")
+    ping("reddit.com")
+    ping("youtube.com")
