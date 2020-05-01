@@ -1,62 +1,30 @@
-'''
-Program name: ChatRoom
-Server: provides a common chat room
-'''
 import socket
 import threading
 import argparse
 import sys
 
-def broadcast(clients, msg, name=""):
+def broadcast(clients, msg, data=""):
     for client in clients:
-        message = name.encode('utf-8') + msg
-        try:
-            client.send(message)
-        except BrokenPipeError:
-            sys.exit(1)
+        message = data.encode('utf-8') + msg
+        client.send(message)
 
 def chat_room(c, clients):
     try:
         data = c.recv(4096).decode('utf-8')
-        # JOIN method: client joining a chat room
-        JOIN = f"""
-CHAT/1.0 JOIN\r\n
-Username: {data}\r\n
-\r\n
-        """
-        print(JOIN)
-        client = f"{data} has joined the chat room..."
-        clients[c] = data
+        client = "%s has joined the chat room..." % data
         broadcast(clients, client.encode('utf-8'))
+        clients[c] = data
         while True:
             msg = c.recv(4096) 
             bye = 'Gotta go, TTYL!'
             if msg != bye.encode('utf-8'):
                 broadcast(clients, msg, data+": ")
-                # TEXT method: client sending a message to chat room
-                TEXT = f"""
-CHAT/1.0 TEXT\r\n
-Username: {data}\r\n
-Msg-len: {len(msg.decode('utf-8'))}\r\n
-Msg: {msg.decode('utf-8')}
-\r\n
-                """
-                print(TEXT)
             else:
                 broadcast(clients, msg, data+": ")
-                # LEAVE method: client leaving a chat room
-                LEAVE = f"""
-CHAT/1.0 LEAVE\r\n
-Username: {data}\r\n
-\r\n
-                """
-                print(LEAVE)
                 c.close()
-                #print(f"before del: {clients}")
                 del clients[c]
-                #print(f"after del: {clients}")
-                left = f"{data} has left the chat."
-                broadcast(clients, left.encode('utf-8'))
+                client = "%s has left the chat." % data
+                broadcast(clients, client.encode('utf-8'))
                 break
     except Exception as e:
         raise e
@@ -105,15 +73,20 @@ if __name__ == '__main__':
             (client_s, client_addr) = s.accept()
             # If successful, we now have TWO sockets
             #  (1) The original listening socket, still active
-            #  (2) The new_connection socket connected to the client
+            #  (2) The new socket connected to the client
         except socket.error as msg:
             print("Error: unable to accept()")
             print("Description: " + str(msg))
             sys.exit()
 
         print("Accepted incoming connection from client")
-        client_ip, port = client_addr
-        print(f"Client IP: {str(client_ip)} Port: {str(port)}")
-
+        print("Client IP, Port = %s" % str(client_addr))
+        
         client_s.send("<TYPE 'Gotta go, TTYL!' to QUIT>".encode("utf8"))
+
         threading.Thread(target = chat_room, args = (client_s, clients)).start()
+        
+        if len(clients) == 0:
+            break
+        
+    s.close()
