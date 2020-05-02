@@ -1,12 +1,16 @@
 '''
-Program name: ChatRoom
+Program name: ChatRoom/server.py
+
 Server: provides a common chat room
+
+Usage: Run python server.py (default port = '8765')
 '''
 import socket
 import threading
 import argparse
 import sys
 
+# Broadcast all the message to all the clients
 def broadcast(clients, msg, name=""):
     for client in clients:
         message = name.encode('utf-8') + msg
@@ -15,6 +19,7 @@ def broadcast(clients, msg, name=""):
         except BrokenPipeError:
             sys.exit(1)
 
+# Create the chat_room function to handle the messages
 def chat_room(c, clients):
     try:
         data = c.recv(4096).decode('utf-8')
@@ -67,7 +72,7 @@ Username: {data}\r\n
         raise e
         sys.exit(1)
 
-
+# Main function
 if __name__ == '__main__':
     # Use argparse method
     parser = argparse.ArgumentParser()

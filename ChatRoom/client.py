@@ -1,10 +1,13 @@
 '''
-Program name: ChatRoom
+Program name: ChatRoom/client.py
+
 GUI Client: a GUI client that can communicate with the server.
             a client can send text messages to all parties in the chat room, 
             as well as receive notifications when other clients connect or disconnect. 
             Clients do not communicate directly with other clients. 
             Instead, all communication is routed through the central server.
+            
+Usage: Run python client.py -u <user-name> (default ip = 'localhost', default port = '8765')
 '''
 import socket
 import threading
@@ -13,6 +16,7 @@ from tkinter.filedialog import askopenfilename
 import argparse
 import os
 
+# Receive message from the server
 def recvMessage(socket):
    while True:
       try:
@@ -21,6 +25,7 @@ def recvMessage(socket):
       except OSError:
          break
 
+# Send message to the server
 def sendMessage(event=None):
    msg = my_msg.get() 
    my_msg.set("")
@@ -29,6 +34,7 @@ def sendMessage(event=None):
       s.close()
       window.quit()
       
+# Send file to the server
 def sendFile(event=None):
    file = askopenfilename()
    if(len(file) > 0 and os.path.isfile(file)):
@@ -39,12 +45,14 @@ def sendFile(event=None):
    else:
       print("UI: File operation canceled")
 
-def on_closing(event=None):
+
+# Close the window
+def hover_close(event=None):
    my_msg.set("Gotta go, TTYL!")
    sendMessage()
 
+# Main funciton
 if __name__ == '__main__':
-
     # Use argparse method
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', '-v', action='version', version='%(prog)s 1.0')
@@ -53,9 +61,11 @@ if __name__ == '__main__':
     parser.add_argument('--username', '-u')
     args = parser.parse_args()
     
+    # Create socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((args.server_ip , args.server_port))
     
+    # Use tkinter
     window = tk.Tk()
     window.title("ChatRoom/1.0 Connected to: "+ args.server_ip + ": "+str(args.server_port))
 
@@ -78,7 +88,7 @@ if __name__ == '__main__':
     file_button = tk.Button(window, text="File", command=sendFile, width = 5)
     file_button.pack(side=tk.LEFT)
 
-    window.protocol("WM_DELETE_WINDOW", on_closing)
+    window.protocol("WM_DELETE_WINDOW", hover_close)
 
     threading.Thread(target=recvMessage, args = (s,)).start()
 
