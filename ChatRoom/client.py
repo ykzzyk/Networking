@@ -33,25 +33,24 @@ def sendFile(event=None):
    file = askopenfilename()
    if(len(file) > 0 and os.path.isfile(file)):
       print("UI: Selected file: %s" % file)
-      filename = file.split('/')
       with open(file, 'rb') as f:
-         send_file_name = b'sending file name - ' + filename[-1].encode('utf-8') + b': '
-         s.send(send_file_name + f.read())
+         filename = b'sending file name - ' + file.split('/')[-1].encode('utf-8') + b': '
+         s.send(filename + f.read())
    else:
       print("UI: File operation canceled")
 
 def on_closing(event=None):
-    my_msg.set("Gotta go, TTYL!")
-    sendMessage()
+   my_msg.set("Gotta go, TTYL!")
+   sendMessage()
 
 if __name__ == '__main__':
 
     # Use argparse method
     parser = argparse.ArgumentParser()
-    parser.add_argument('--version', action='version', version='%(prog)s 1.0')
-    parser.add_argument('server_ip', nargs='?', default='localhost')
-    parser.add_argument('server_port', nargs='?', default=8765)
-    parser.add_argument('username')
+    parser.add_argument('--version', '-v', action='version', version='%(prog)s 1.0')
+    parser.add_argument('--server_ip', '-ip', nargs='?', default='localhost')
+    parser.add_argument('--server_port', '-p', nargs='?', default=8765)
+    parser.add_argument('--username', '-u')
     args = parser.parse_args()
     
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

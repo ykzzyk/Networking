@@ -18,46 +18,51 @@ def broadcast(clients, msg, name=""):
 def chat_room(c, clients):
     try:
         data = c.recv(4096).decode('utf-8')
-        # JOIN method: client joining a chat room
-        JOIN = f"""
+        if data != 'Gotta go, TTYL!':
+            # JOIN method: client joining a chat room
+            JOIN = f"""
 CHAT/1.0 JOIN\r\n
 Username: {data}\r\n
 \r\n
-        """
-        print(JOIN)
-        client = f"{data} has joined the chat room..."
-        clients[c] = data
-        broadcast(clients, client.encode('utf-8'))
-        while True:
-            msg = c.recv(4096) 
-            bye = 'Gotta go, TTYL!'
-            if msg != bye.encode('utf-8'):
-                broadcast(clients, msg, data+": ")
-                # TEXT method: client sending a message to chat room
-                TEXT = f"""
+            """
+            print(JOIN)
+            client = f"{data} has joined the chat room..."
+            clients[c] = data
+            broadcast(clients, client.encode('utf-8'))
+            while True:
+                msg = c.recv(4096)
+                if msg != b'Gotta go, TTYL!':
+                    broadcast(clients, msg, data+": ")
+                    # TEXT method: client sending a message to chat room
+                    TEXT = f"""
 CHAT/1.0 TEXT\r\n
 Username: {data}\r\n
 Msg-len: {len(msg.decode('utf-8'))}\r\n
-Msg: {msg.decode('utf-8')}
 \r\n
-                """
-                print(TEXT)
-            else:
-                broadcast(clients, msg, data+": ")
-                # LEAVE method: client leaving a chat room
-                LEAVE = f"""
+{msg.decode('utf-8')}
+                    """
+                    print(TEXT)
+                else:
+                    broadcast(clients, msg, data+": ")
+                    # LEAVE method: client leaving a chat room
+                    LEAVE = f"""
 CHAT/1.0 LEAVE\r\n
 Username: {data}\r\n
 \r\n
-                """
-                print(LEAVE)
-                c.close()
-                #print(f"before del: {clients}")
-                del clients[c]
-                #print(f"after del: {clients}")
-                left = f"{data} has left the chat."
-                broadcast(clients, left.encode('utf-8'))
-                break
+                    """
+                    print(LEAVE)
+                    c.close()
+                    #print(f"before del: {clients}")
+                    del clients[c]
+                    #print(f"after del: {clients}")
+                    left = f"{data} has left the chat."
+                    broadcast(clients, left.encode('utf-8'))
+                    break
+        else:
+            print("No one connected to the server\n\n")
+            c.close()
+            clients = {}
+            
     except Exception as e:
         raise e
         sys.exit(1)
@@ -99,6 +104,7 @@ if __name__ == '__main__':
     print("Listening socket bound to port %d" % args.server_port)
     
     clients = {}
+    cnt = 0
     while True:
         # Accept an incoming request
         try:
@@ -115,5 +121,7 @@ if __name__ == '__main__':
         client_ip, port = client_addr
         print(f"Client IP: {str(client_ip)} Port: {str(port)}")
 
-        client_s.send("<TYPE 'Gotta go, TTYL!' to QUIT>".encode("utf8"))
+        client_s.send(b"<TYPE 'Gotta go, TTYL!' to QUIT>")
+        
         threading.Thread(target = chat_room, args = (client_s, clients)).start()
+        
