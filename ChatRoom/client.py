@@ -68,10 +68,16 @@ if __name__ == '__main__':
     # Use tkinter
     window = tk.Tk()
     window.title("ChatRoom/1.0 Connected to: "+ args.server_ip + ": "+str(args.server_port))
-
+    
     messages_frame = tk.Frame(window)
-    my_msg = tk.StringVar()  
-    my_msg.set("Enter Username...")
+    label = tk.Label(window, text = "TYPE <Gotta go, TTYL!> to QUIT", width = 53, font=("Helvetica", 12), fg="Blue", anchor="w")
+    label.pack()
+    
+    my_msg = tk.StringVar()
+    
+    s.send(args.username.encode('utf-8'))
+    
+    
     scrollbar = tk.Scrollbar(messages_frame)  
     msg_list = tk.Listbox(messages_frame, height=25, width=40, yscrollcommand=scrollbar.set)
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
