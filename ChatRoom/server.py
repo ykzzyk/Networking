@@ -102,22 +102,26 @@ if __name__ == '__main__':
     print("Listening socket bound to port %d" % args.server_port)
     
     clients = {}
-    while True:
-        # Accept an incoming request
-        try:
-            (client_s, client_addr) = s.accept()
-            # If successful, we now have TWO sockets
-            #  (1) The original listening socket, still active
-            #  (2) The new_connection socket connected to the client
-        except socket.error as msg:
-            print("Error: unable to accept()")
-            print("Description: " + str(msg))
-            sys.exit()
+    try:
+        while True:
+            # Accept an incoming request
+            try:
+                (client_s, client_addr) = s.accept()
+                # If successful, we now have TWO sockets
+                #  (1) The original listening socket, still active
+                #  (2) The new_connection socket connected to the client
+            except socket.error as msg:
+                print("Error: unable to accept()")
+                print("Description: " + str(msg))
+                sys.exit()
 
-        print("Accepted incoming connection from client")
-        client_ip, port = client_addr
-        print(f"Client IP: {str(client_ip)} Port: {str(port)}")
+            print("Accepted incoming connection from client")
+            client_ip, port = client_addr
+            print(f"Client IP: {str(client_ip)} Port: {str(port)}")
 
-        #client_s.send(b"<TYPE 'Gotta go, TTYL!' to QUIT>")
-        threading.Thread(target = chat_room, args = (client_s, clients)).start()
+            #client_s.send(b"<TYPE 'Gotta go, TTYL!' to QUIT>")
+            threading.Thread(target = chat_room, args = (client_s, clients)).start()
+    # Press Ctrl-c to close the socket
+    except KeyboardInterrupt:
+        s.close()
         
